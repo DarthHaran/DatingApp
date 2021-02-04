@@ -21,6 +21,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         if (error) {
           switch (error.status) {
             case 400:
+              error.statusText = 'OK' ? 'Bad Request' : error.statusText, error.status;
               if (error.error.errors) {
                 const modalStateErrors = [];
                 for (const key in error.error.errors) {
@@ -28,27 +29,30 @@ export class ErrorInterceptor implements HttpInterceptor {
                     modalStateErrors.push(error.error.errors[key])
                   }
                 }
-                throw modalStateErrors;
+                throw modalStateErrors.flat();
               } else {
-                this.toastr.error(error.statusText, error.status);
+                this.toastr.error(error.statusText);
               }
               break;
 
             case 401:
-              this.toastr.error(error.statusText === 'OK' ? 'Unauthorised' : error.statusText, error.status);
+              error.statusText = 'OK' ? 'Unauthorised' : error.statusText, error.status;
+              this.toastr.error(error.statusText);
               break;
 
             case 404:
+              error.statusText = 'OK' ? 'Not Found' : error.statusText, error.status;
               this.router.navigateByUrl('/not-found');
               break;
 
             case 500:
+              error.statusText = 'OK' ? 'Internal Server Error' : error.statusText, error.status;
               const navigationExtras: NavigationExtras = {state: {error: error.error}}
               this.router.navigateByUrl('/server-error', navigationExtras);
               break;
           
             default:
-              this.toastr.error('Oops. something went wrong. :(');
+              this.toastr.error('Oops. Something went wrong. :(');
               console.log(error);
               break;
           }
