@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ok } from 'assert';
 
 @Component({
   selector: 'app-test-errors',
@@ -9,6 +8,7 @@ import { ok } from 'assert';
 })
 export class TestErrorsComponent implements OnInit {
   baseUrl = 'https://localhost:5001/api/';
+  validationErrors: string[] = [];
 
   constructor(private http: HttpClient) { }
 
@@ -19,9 +19,6 @@ export class TestErrorsComponent implements OnInit {
     this.http.get(this.baseUrl + 'buggy/not-found').subscribe(response => {
       console.log(response);
     }, error => {
-      if (error.statusText === 'OK'){
-        error.statusText = 'Not Found';
-      }
       console.log(error);
     })
   }
@@ -30,9 +27,6 @@ export class TestErrorsComponent implements OnInit {
     this.http.get(this.baseUrl + 'buggy/bad-request').subscribe(response => {
       console.log(response);
     }, error => {
-      if (error.statusText === 'OK'){
-        error.statusText = 'Bad Request';
-      }
       console.log(error);
     })
   }
@@ -41,9 +35,6 @@ export class TestErrorsComponent implements OnInit {
     this.http.get(this.baseUrl + 'buggy/server-error').subscribe(response => {
       console.log(response);
     }, error => {
-      if (error.statusText === 'OK'){
-        error.statusText = 'Internal Server Error';
-      }
       console.log(error);
     })
   }
@@ -52,9 +43,6 @@ export class TestErrorsComponent implements OnInit {
     this.http.get(this.baseUrl + 'buggy/auth').subscribe(response => {
       console.log(response);
     }, error => {
-      if (error.statusText === 'OK'){
-        error.statusText = 'Unauthorized';
-      }
       console.log(error);
     })
   }
@@ -63,10 +51,8 @@ export class TestErrorsComponent implements OnInit {
     this.http.post(this.baseUrl + 'account/register', {}).subscribe(response => {
       console.log(response);
     }, error => {
-      if (error.statusText === 'OK'){
-        error.statusText = 'Bad Request';
-      }
       console.log(error);
+      this.validationErrors = error;
     })
   }
 
